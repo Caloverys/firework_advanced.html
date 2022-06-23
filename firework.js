@@ -1,16 +1,17 @@
-const canvas = document.querySelector('canvas');
+   const canvas = document.querySelector('canvas');
 const {width,height} = canvas.getBoundingClientRect();
 const context = canvas.getContext('2d')
 
 function animate(selector) {
  
 
-    let fromHSL = `rgba(${Math.random()*256},${Math.random()*256},${Math.random()*256})`
+    let fromHSL = function(){
+      return `rgba(${Math.random()*256},${Math.random()*256},${Math.random()*256})`}
 
     let fireworksFactory = function fireworksFactory() {
         let centerX = (0.2 + 0.6 * Math.random()) * width;
         let centerY = (0.1 + 0.4 * Math.random()) * height;
-        let color = fromHSL
+        let color = fromHSL();
         return new Firework(centerX, centerY, color);
     };
 
@@ -52,7 +53,7 @@ Animation.prototype.start = function start() {
         }
     };
 
-    this.redrawInterval = setInterval(redraw, 30);
+    this.redrawInterval = setInterval(redraw,10);
     this.factoryInterval = setInterval(launch, 1500);
 }
 
@@ -68,7 +69,7 @@ function Firework(centerX, centerY, color) {
     this.centerY = centerY;
     this.color = color;
     this.particles = new Array(500);
-    this.Δr = 20;
+    this.Δr = 200;
     this.age = 0;
 
     let τ = 2 * Math.PI;
@@ -97,21 +98,24 @@ function Particle(x, y, r, θ, φ, size, color) {
     this.origX = x;
     this.origY = y;
     this.r = r;
+    //Note js Math.sin return sin value of radian not angles!!!
     this.sinθ = Math.sin(θ);
-  
     this.sinφ = Math.sin(φ);
     this.cosφ = Math.cos(φ);
+    //console.table([["θ","φ","this.sinθ", "this.sinφ","this.cosφ"],[θ,φ,this.sinθ, this.sinφ,this.cosφ]])
     this.size = size;
     this.color = color;
     this.recalcCartesianProjection();
 }
 
 Particle.prototype.recalcCartesianProjection = function() {
+
     this.x = this.origX + this.r * this.sinθ * this.cosφ;
-    this.y = this.origY + this.r * this.sinθ * this.sinφ;
+    this.y = this.origY + this.r * this.sinθ * this.sinφ
 };
 (function(){
   const anim = animate('#sky');
             setTimeout(function() { anim.stop(); }, 60000);
+            document.querySelector('button').addEventListener('click',()=>anim.stop())
   
 })()
